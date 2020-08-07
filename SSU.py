@@ -4,7 +4,7 @@ from shutil import rmtree
 from glob import glob
 from tqdm import tqdm
 from math import log
-import requests, Fs, sys, os
+import requests, Fs, sys, os, shutil
 
 requests.packages.urllib3.disable_warnings()
 unit_list = list(zip(['bytes','kB','MB','GB'], [0, 0, 1, 2]))
@@ -246,6 +246,7 @@ if __name__ == '__main__':
     else:
         print('Error in retrieving CNMT Content ID.')
         print('Status: %d' % r.status_code)
+        shutil.rmtree(download_dir, ignore_errors=True)
         sys.exit(3)
 
     endpoint = '/c/s/{content_id}'.format(content_id=cid)
