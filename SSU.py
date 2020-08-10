@@ -4,7 +4,7 @@ from shutil import rmtree
 from glob import glob
 from tqdm import tqdm
 from math import log
-import requests, Fs, sys, os, shutil
+import requests, Fs, sys, os
 
 requests.packages.urllib3.disable_warnings()
 unit_list = list(zip(['bytes','kB','MB','GB'], [0, 0, 1, 2]))
@@ -44,6 +44,15 @@ def make_urls(env,server_set,cdn_name,sun_name,device_id):
         endpoint='/v1{endpoint}',
         device_id=device_id)
     return cdn_url, sun_url
+    
+# Create firmware directories
+def make_firm_dir(download_dir,fw_dir,version):
+    if not os.path.exists(download_dir):
+        os.mkdir(download_dir)
+
+    if not os.path.exists(fw_dir):
+        os.mkdir(fw_dir)
+    return
 
 # Get Title and Version
 def update_meta(s,sun_url):
@@ -225,16 +234,9 @@ if __name__ == '__main__':
 
     if not os.path.exists('downloads'):
         os.mkdir('downloads')
-
-    # ver = 65536
-    # title_id = '01006a800016e800'
+        
     download_dir = os.path.join('downloads','Firmware ' + version)
-    if not os.path.exists(download_dir):
-        os.mkdir(download_dir)
-
     fw_dir = os.path.join(download_dir,'ncas')
-    if not os.path.exists(fw_dir):
-        os.mkdir(fw_dir)
 
     endpoint = '/t/s/{title_id}/{version}'.format(
                     title_id=title_id,
@@ -243,10 +245,10 @@ if __name__ == '__main__':
     r = s.head(cdn.format(endpoint=endpoint))
     if r.status_code == 200 and 'X-Nintendo-Content-ID' in r.headers:
         cid = r.headers['X-Nintendo-Content-ID']
+        make_firm_dir(download_dir,fw_dir,version)
     else:
         print('Error in retrieving CNMT Content ID.')
         print('Status: %d' % r.status_code)
-        shutil.rmtree(download_dir, ignore_errors=True)
         sys.exit(3)
 
     endpoint = '/c/s/{content_id}'.format(content_id=cid)
