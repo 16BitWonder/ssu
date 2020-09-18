@@ -27,13 +27,14 @@ def generate_session(cert,fw,device_id,env):
     return s
 
 # Prepare CDN urls
-def make_urls(env,server_set,cdn_name,sun_name,device_id):
-    base_url = 'https://{name}.hac.{env}.{server_set}.nintendo.net{endpoint}?device_id={device_id}'
+def make_urls(env,server_set,host,cdn_name,sun_name,device_id):
+    base_url = 'https://{name}.hac.{env}.{server_set}.{host}{endpoint}?device_id={device_id}'
 
     cdn_url = base_url.format(
         name=cdn_name,
         env=env,
         server_set=server_set,
+        host=host,
         endpoint='{endpoint}',
         device_id=device_id)
 
@@ -41,6 +42,7 @@ def make_urls(env,server_set,cdn_name,sun_name,device_id):
         name=sun_name,
         env=env,
         server_set=server_set,
+        host=host,
         endpoint='/v1{endpoint}',
         device_id=device_id)
     return cdn_url, sun_url
@@ -193,6 +195,7 @@ if __name__ == '__main__':
     parse.add_argument('--version',help='FW Version to download.',default='LATEST')
     parse.add_argument('--environment',help='Set the CDN Environment',default='lp1')
     parse.add_argument('--server-set',help='Set the CDN server set',default='d4c')
+    parse.add_argument('--host',help='Set the CDN host',default='nintendo.net')
     parse.add_argument('--cdn-name',help='Set CDN server name',default='atumn')
     parse.add_argument('--sun-name',help='Set SUN CDN server name',default='sun')
     parse.add_argument('--certificate',help='Set client certificate path',default='cert.pem')
@@ -215,7 +218,7 @@ if __name__ == '__main__':
 
     print('Creating Session')
     s = generate_session(args.certificate,args.firmware,args.device_id,args.environment)
-    cdn,sun = make_urls(args.environment,args.server_set,args.cdn_name,args.sun_name,args.device_id)
+    cdn,sun = make_urls(args.environment,args.server_set,args.host,args.cdn_name,args.sun_name,args.device_id)
 
     print('Retrieving System Update Meta')
     title_id,latest = update_meta(s,sun)
