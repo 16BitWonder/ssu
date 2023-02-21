@@ -132,10 +132,10 @@ def download_content(s,cdn,path,ncaid):
 # Makes a Update Version human readable
 def pretty_version(v):
     build = v & 0xFFFF
-    major = (v >> 26) & 0x1F
-    middle = (v >> 20) & 0x1F
+    major = (v >> 26) & 0x3F
+    middle = (v >> 20) & 0x3F
     minor = (v >> 16) & 0xF
-    return '%d.%d.%d.%0.3d' % (major,middle,minor,build)
+    return '%d.%d.%d.%0.4d' % (major,middle,minor,build)
 
 # Make a large size human readable
 def pretty_size(num):

@@ -2,8 +2,8 @@
 # SciresM, 2017
 from struct import unpack as up, pack as pk
 from binascii import hexlify as hx, unhexlify as uhx
-from Crypto.Cipher import AES
-from Crypto.Util import Counter
+from Cryptodome.Cipher import AES
+from Cryptodome.Util import Counter
 
 def sxor(s1, s2):
 	assert(len(s1) == len(s2))
